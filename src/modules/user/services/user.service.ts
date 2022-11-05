@@ -9,14 +9,14 @@ type CreateUserType = {
 };
 
 export interface IUserService {
-  fetchUser(id: number): Promise<User | null>;
+  fetchUser(id: string): Promise<User | null>;
   createUser(data: CreateUserType): Promise<User>;
 }
 
 @Injectable()
 export class UserService implements IUserService {
   constructor(private readonly prisma: PrismaService) {}
-  async fetchUser(id: number): Promise<User | null> {
+  async fetchUser(id: string): Promise<User | null> {
     return await this.prisma.user.findUnique({ where: { id } });
   }
 
