@@ -6,6 +6,7 @@ import { APP_FILTER, APP_PIPE } from "@nestjs/core";
 import { ValidationPipe } from "@pipes/validation.pipe";
 
 import * as fs from "fs";
+import * as Joi from "joi";
 import * as YAML from "js-yaml";
 import * as path from "path";
 import { UserModule } from "../user/user.module";
@@ -32,6 +33,22 @@ import { AppController } from "./controllers/app.controller";
           return config;
         },
       ],
+      validationSchema: Joi.object({
+        // .env
+        NODE_ENV: Joi.string()
+          .valid("production", "development")
+          .default("development"),
+        POSTGRES: Joi.string().required(),
+
+        // config.yaml
+        app: Joi.object({
+          port: Joi.number().default(3000),
+          cors: Joi.object({
+            origin: Joi.array().required(),
+            credentials: Joi.boolean().required(),
+          }),
+        }),
+      }),
     }),
     UserModule,
   ],
@@ -40,7 +57,6 @@ import { AppController } from "./controllers/app.controller";
     { provide: APP_FILTER, useClass: PostgresExceptionFilter },
     { provide: APP_FILTER, useClass: HttpExceptionFilter },
     { provide: APP_PIPE, useClass: ValidationPipe },
-    // { provide: APP_INTERCEPTOR, useClass: LoggingInterceptor },
   ],
 })
 export class AppModule {}
