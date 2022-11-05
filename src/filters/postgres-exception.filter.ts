@@ -1,13 +1,12 @@
 import {
   ArgumentsHost,
-  BadRequestException,
   Catch,
   ExceptionFilter,
   HttpStatus,
   Logger,
 } from "@nestjs/common";
 import { Prisma } from "@prisma/client";
-import { NextFunction, Request, Response } from "express";
+import { Request, Response } from "express";
 
 @Catch(Prisma.PrismaClientKnownRequestError)
 export class PostgresExceptionFilter implements ExceptionFilter {
@@ -15,7 +14,6 @@ export class PostgresExceptionFilter implements ExceptionFilter {
     const ctx = host.switchToHttp();
     const request = ctx.getRequest<Request>();
     const response = ctx.getResponse<Response>();
-    const next = ctx.getNext<NextFunction>();
 
     const message = {
       timestamp: new Date().getTime(),
