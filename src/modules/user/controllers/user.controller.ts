@@ -6,7 +6,6 @@ import {
   HttpStatus,
   Inject,
   Param,
-  ParseIntPipe,
   Post,
 } from "@nestjs/common";
 import { CreateUserDto } from "../dtos/CreateUser.dto";
@@ -17,7 +16,7 @@ export class UserController {
   constructor(@Inject("USER_SERVICE") private readonly service: IUserService) {}
 
   @Get(":id")
-  async getUserById(@Param("id", ParseIntPipe) userID: number) {
+  async getUserById(@Param("id") userID: string) {
     const user = await this.service.fetchUser(userID);
     if (!user) {
       throw new HttpException(
