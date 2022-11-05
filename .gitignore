@@ -9,6 +9,7 @@ config.development.yaml
 .env.production
 
 package-lock.json
+.git
 
 # Logs
 logs
