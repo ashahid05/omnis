@@ -38,7 +38,7 @@ import { AppController } from "./controllers/app.controller";
         NODE_ENV: Joi.string()
           .valid("production", "development")
           .default("development"),
-        POSTGRES: Joi.string().required(),
+        POSTGRES_URL: Joi.string().required(),
 
         // config.yaml
         app: Joi.object({
