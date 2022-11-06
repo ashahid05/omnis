@@ -9,11 +9,13 @@ import {
   Post,
 } from "@nestjs/common";
 import { CreateUserDto } from "../dtos/CreateUser.dto";
-import { IUserService } from "../services/user.service";
+import { IUsersService } from "../services/users.service";
 
-@Controller("user")
+@Controller("users")
 export class UserController {
-  constructor(@Inject("USER_SERVICE") private readonly service: IUserService) {}
+  constructor(
+    @Inject("USERS_SERVICE") private readonly service: IUsersService,
+  ) {}
 
   @Get(":id")
   async getUserById(@Param("id") userID: string) {

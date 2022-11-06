@@ -9,7 +9,7 @@ import * as fs from "fs";
 import * as Joi from "joi";
 import * as YAML from "js-yaml";
 import * as path from "path";
-import { UserModule } from "../user/user.module";
+import { UsersModule } from "../users/users.module";
 import { AppController } from "./controllers/app.controller";
 
 @Module({
@@ -50,7 +50,7 @@ import { AppController } from "./controllers/app.controller";
         }),
       }),
     }),
-    UserModule,
+    UsersModule,
   ],
   controllers: [AppController],
   providers: [

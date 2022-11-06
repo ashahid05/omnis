@@ -8,13 +8,13 @@ type CreateUserType = {
   age: number;
 };
 
-export interface IUserService {
+export interface IUsersService {
   fetchUser(id: string): Promise<User | null>;
   createUser(data: CreateUserType): Promise<User>;
 }
 
 @Injectable()
-export class UserService implements IUserService {
+export class UsersService implements IUsersService {
   constructor(private readonly prisma: PrismaService) {}
   async fetchUser(id: string): Promise<User | null> {
     return await this.prisma.user.findUnique({ where: { id } });
