@@ -13,6 +13,11 @@ export class CreateUserDto {
   @Length(3, 20)
   username: string;
 
+  @IsString()
+  @IsNotEmpty()
+  @Length(6, 13)
+  password: string;
+
   @IsNotEmpty()
   @IsEmail()
   email: string;
