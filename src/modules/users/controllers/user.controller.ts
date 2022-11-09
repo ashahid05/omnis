@@ -1,3 +1,5 @@
+import { HttpExceptionFilter } from "@filters/http-exception.filter";
+import { AuthenticatedGuard } from "@modules/auth/utils/local.guard";
 import {
   Body,
   Controller,
@@ -7,7 +9,10 @@ import {
   Inject,
   Param,
   Post,
+  Req,
+  UseGuards,
 } from "@nestjs/common";
+import { Request } from "express";
 import { CreateUserDto } from "../dtos/CreateUser.dto";
 import { IUsersService } from "../services/users.service";
 
@@ -17,14 +22,17 @@ export class UserController {
     @Inject("USERS_SERVICE") private readonly service: IUsersService,
   ) {}
 
+  @Get("@me")
+  @UseGuards(AuthenticatedGuard)
+  async getSelfUser(@Req() request: Request) {
+    return request.user;
+  }
+
   @Get(":id")
   async getUserById(@Param("id") userID: string) {
     const user = await this.service.fetchUser(userID);
     if (!user) {
-      throw new HttpException(
-        `User with ID ${userID} not found`,
-        HttpStatus.NOT_FOUND,
-      );
+      throw new HttpException("USER_NOT_FOUND", HttpStatus.NOT_FOUND);
     }
     return user;
   }
