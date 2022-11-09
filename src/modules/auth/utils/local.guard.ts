@@ -7,7 +7,10 @@ export class LocalAuthGuard extends AuthGuard("local") {
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const result = (await super.canActivate(context)) as boolean;
     const request = context.switchToHttp().getRequest<Request>();
-    await super.logIn(request);
+    if (!(request.session as any).passport) {
+      // user does not have old session
+      await super.logIn(request);
+    }
     return result;
   }
 }
