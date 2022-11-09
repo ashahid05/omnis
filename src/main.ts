@@ -5,6 +5,8 @@ import { SwaggerModule, DocumentBuilder } from "@nestjs/swagger";
 import { AppModule } from "./modules/app/app.module";
 import { PrismaService } from "./prisma.service";
 
+import * as session from "express-session";
+
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   const prismaService = app.get(PrismaService);
@@ -26,6 +28,13 @@ async function bootstrap() {
   }>("app.cors");
 
   app.enableCors(corsConfig);
+  app.use(
+    session({
+      secret: configService.get<string>("SESSION_SECRET"),
+      saveUninitialized: false,
+      resave: false,
+    }),
+  );
 
   const port = configService.get<number>("app.port");
   await app.listen(port);
