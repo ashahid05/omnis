@@ -18,8 +18,8 @@
     "forceConsistentCasingInFileNames": false,
     "noFallthroughCasesInSwitch": false,
     "paths": {
-      "@app/*": ["src/middlewares/modules/app/*"],
-      "@modules/*": ["src/middlewares/modules/*"],
+      "@app/*": ["src/modules/app/*"],
+      "@modules/*": ["src/modules/*"],
       "@decorators/*": ["src/decorators/*"],
       "@enums/*": ["src/enums/*"],
       "@middlewares/*": ["src/middlewares/*"],
