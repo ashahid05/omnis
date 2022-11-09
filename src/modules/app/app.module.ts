@@ -1,9 +1,11 @@
 import { HttpExceptionFilter } from "@filters/http-exception.filter";
 import { PostgresExceptionFilter } from "@filters/postgres-exception.filter";
+import { AuthModule } from "@modules/auth/auth.module";
 import { Module } from "@nestjs/common";
 import { ConfigModule } from "@nestjs/config";
 import { APP_FILTER, APP_PIPE } from "@nestjs/core";
 import { ValidationPipe } from "@pipes/validation.pipe";
+import { PassportModule } from "@nestjs/passport";
 
 import * as fs from "fs";
 import * as Joi from "joi";
@@ -11,6 +13,7 @@ import * as YAML from "js-yaml";
 import * as path from "path";
 import { UsersModule } from "../users/users.module";
 import { AppController } from "./controllers/app.controller";
+import { PostsModule } from "@modules/posts/posts.module";
 
 @Module({
   imports: [
@@ -50,7 +53,10 @@ import { AppController } from "./controllers/app.controller";
         }),
       }),
     }),
+    PassportModule.register({ session: true }),
+    AuthModule,
     UsersModule,
+    PostsModule,
   ],
   controllers: [AppController],
   providers: [
