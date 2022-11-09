@@ -10,11 +10,32 @@ datasource db {
   url      = env("POSTGRES_URL")
 }
 
+model Session {
+  id        String   @id
+  sid       String   @unique()
+  data      String
+  expiresAt DateTime
+}
+
 model User {
   id         String   @id @default(cuid())
   username   String   @unique
+  password   String?
   email      String   @unique
+  salt       String
   age        Int
+  posts      Post[]
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+}
+
+model Post {
+  id         Int      @id @default(autoincrement())
+  author     User     @relation(fields: [authorId], references: [id])
+  authorId   String
+  rating     String?
+  title      String
+  content    String
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
 }
