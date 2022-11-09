@@ -1,4 +1,7 @@
 app:
+  cookie:
+    name: "user.sid"
+    age: 86400000 # 1000 * 60 * 60 * 24 | one day
   cors:
     origin:
       - "http://localhost:3001"
