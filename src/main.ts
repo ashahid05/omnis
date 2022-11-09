@@ -1,14 +1,12 @@
 import { LoggingInterceptor } from "@interceptors/logging.interceptor";
 import { ConfigService } from "@nestjs/config";
 import { NestFactory } from "@nestjs/core";
-import { SwaggerModule, DocumentBuilder } from "@nestjs/swagger";
 import { AppModule } from "@app/app.module";
 import { PrismaService } from "./prisma.service";
 import { PrismaSessionStore } from "@quixo3/prisma-session-store";
 
 import * as session from "express-session";
 import * as passport from "passport";
-import { config } from "process";
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -17,14 +15,6 @@ async function bootstrap() {
   app.useGlobalInterceptors(new LoggingInterceptor());
   const configService = app.get(ConfigService);
 
-  const documentConfig = new DocumentBuilder()
-    .setTitle("Nest.js API")
-    .setDescription("This is a startup API for the future project")
-    .addTag("api")
-    .build();
-
-  const document = SwaggerModule.createDocument(app, documentConfig);
-  SwaggerModule.setup("api", app, document);
   const corsConfig = configService.get<{
     origin: string[];
     credentials: boolean;
