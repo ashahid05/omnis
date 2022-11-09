@@ -12,7 +12,10 @@ type CreateUserType = {
 
 export interface IUsersService {
   fetchUser(id: string): Promise<User | null>;
-  fetchUserByUsername(username: string): Promise<User | null>;
+  fetchUserByUsername(
+    username: string,
+    withPassword: boolean,
+  ): Promise<User | null>;
   createUser(data: CreateUserType): Promise<User>;
 }
 
@@ -25,12 +28,17 @@ export class UsersService implements IUsersService {
     delete user?.salt;
     return user;
   }
-  async fetchUserByUsername(username: string): Promise<User | null> {
+  async fetchUserByUsername(
+    username: string,
+    withPassword = false,
+  ): Promise<User | null> {
     const user = await this.prisma.user.findUnique({
       where: { username },
     });
-    delete user?.password;
-    delete user?.salt;
+    if (!withPassword) {
+      delete user?.password;
+      delete user?.salt;
+    }
     return user;
   }
 

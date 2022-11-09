@@ -8,7 +8,7 @@ export class AuthService {
     @Inject("USERS_SERVICE") private readonly usersService: IUsersService,
   ) {}
   async validateUser(username: string, password: string) {
-    const user = await this.usersService.fetchUserByUsername(username);
+    const user = await this.usersService.fetchUserByUsername(username, true);
 
     if (!user) {
       throw new HttpException("USER_NOT_FOUND", HttpStatus.NOT_FOUND);
