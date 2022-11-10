@@ -25,7 +25,7 @@ export class ValidationPipe implements PipeTransform<any> {
         `Validation Error: ${this.formatErrors(errors)}`,
       );
     }
-    return value;
+    return object;
   }
 
   private toValidate(metatype): boolean {
