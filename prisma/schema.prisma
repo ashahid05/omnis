@@ -19,9 +19,10 @@ model Session {
 
 model User {
   id         String   @id @default(cuid())
-  username   String   @unique
-  password   String?
+  first_name String
+  last_name  String
   email      String   @unique
+  password   String
   salt       String
   age        Int
   posts      Post[]
@@ -31,8 +32,8 @@ model User {
 
 model Post {
   id         Int      @id @default(autoincrement())
-  author     User     @relation(fields: [authorId], references: [id])
-  authorId   String
+  author     User     @relation(fields: [author_id], references: [id])
+  author_id  String
   rating     String?
   title      String
   content    String
