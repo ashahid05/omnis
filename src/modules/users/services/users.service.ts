@@ -5,8 +5,7 @@ import { Post } from "@prisma/client";
 import * as bcrypt from "bcrypt";
 
 type CreateUserType = {
-  first_name: string;
-  last_name?: string;
+  name: string;
   password: string;
   email: string;
   age: number;
@@ -45,15 +44,14 @@ export class UsersService implements IUsersService {
   async fetchUserPosts(userId: string): Promise<Post[]> {
     const posts = await this.prisma.post.findMany({
       where: { author_id: userId },
-      include: { author: { select: { first_name: true, last_name: true } } },
+      include: { author: { select: { name: true } } },
     });
 
     return posts;
   }
 
   async createUser({
-    first_name,
-    last_name,
+    name,
     password,
     email,
     age,
@@ -63,8 +61,7 @@ export class UsersService implements IUsersService {
 
     const user = await this.prisma.user.create({
       data: {
-        first_name,
-        last_name,
+        name,
         password: hashedPassword,
         salt,
         email,

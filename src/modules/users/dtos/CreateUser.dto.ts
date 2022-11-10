@@ -1,15 +1,19 @@
 import { Type } from "class-transformer";
-import { IsString, Length, IsNotEmpty, IsEmail, Min } from "class-validator";
+import {
+  IsString,
+  Length,
+  IsNotEmpty,
+  IsEmail,
+  Min,
+  Matches,
+} from "class-validator";
 
 export class CreateUserDto {
-  @IsString()
   @IsNotEmpty()
-  @Length(3, 15)
-  first_name: string;
-
   @IsString()
-  @Length(3, 20)
-  last_name: string;
+  @Matches(/^[a-zA-Z]+ [a-zA-Z]+$/, { message: "'name' must be full name" })
+  @Length(5, 35)
+  name: string;
 
   @IsNotEmpty()
   @IsEmail()

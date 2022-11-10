@@ -15,14 +15,14 @@ export class PostsService {
 
   async fetchPosts() {
     return await this.prisma.post.findMany({
-      include: { author: { select: { first_name: true, last_name: true } } },
+      include: { author: { select: { name: true } } },
     });
   }
 
   async fetchPostById(id: number) {
     const post = await this.prisma.post.findUnique({
       where: { id },
-      include: { author: { select: { first_name: true, last_name: true } } },
+      include: { author: { select: { name: true } } },
     });
     return post;
   }
@@ -30,7 +30,7 @@ export class PostsService {
   async fetchPostsByAuthor(author_id: string) {
     return await this.prisma.post.findMany({
       where: { author_id },
-      include: { author: { select: { first_name: true, last_name: true } } },
+      include: { author: { select: { name: true } } },
     });
   }
 
