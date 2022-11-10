@@ -1,10 +1,12 @@
 import { Injectable } from "@nestjs/common";
 import { User } from "@prisma/client";
 import { PrismaService } from "@root/prisma.service";
+import { Post } from "@prisma/client";
 import * as bcrypt from "bcrypt";
 
 type CreateUserType = {
-  username: string;
+  first_name: string;
+  last_name?: string;
   password: string;
   email: string;
   age: number;
@@ -12,10 +14,8 @@ type CreateUserType = {
 
 export interface IUsersService {
   fetchUser(id: string): Promise<User | null>;
-  fetchUserByUsername(
-    username: string,
-    withPassword: boolean,
-  ): Promise<User | null>;
+  fetchUserByEmail(email: string, withPassword: boolean): Promise<User | null>;
+  fetchUserPosts(userId: string): Promise<Post[]>;
   createUser(data: CreateUserType): Promise<User>;
 }
 
@@ -28,12 +28,12 @@ export class UsersService implements IUsersService {
     delete user?.salt;
     return user;
   }
-  async fetchUserByUsername(
-    username: string,
+  async fetchUserByEmail(
+    email: string,
     withPassword = false,
   ): Promise<User | null> {
     const user = await this.prisma.user.findUnique({
-      where: { username },
+      where: { email },
     });
     if (!withPassword) {
       delete user?.password;
@@ -42,8 +42,18 @@ export class UsersService implements IUsersService {
     return user;
   }
 
+  async fetchUserPosts(userId: string): Promise<Post[]> {
+    const posts = await this.prisma.post.findMany({
+      where: { author_id: userId },
+      include: { author: { select: { first_name: true, last_name: true } } },
+    });
+
+    return posts;
+  }
+
   async createUser({
-    username,
+    first_name,
+    last_name,
     password,
     email,
     age,
@@ -52,7 +62,14 @@ export class UsersService implements IUsersService {
     const hashedPassword = bcrypt.hashSync(password, salt);
 
     const user = await this.prisma.user.create({
-      data: { username, password: hashedPassword, salt, email, age },
+      data: {
+        first_name,
+        last_name,
+        password: hashedPassword,
+        salt,
+        email,
+        age,
+      },
     });
 
     delete user.password;

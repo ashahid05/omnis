@@ -7,11 +7,11 @@ export class AuthService {
   constructor(
     @Inject("USERS_SERVICE") private readonly usersService: IUsersService,
   ) {}
-  async validateUser(username: string, password: string) {
-    const user = await this.usersService.fetchUserByUsername(username, true);
+  async validateUser(email: string, password: string) {
+    const user = await this.usersService.fetchUserByEmail(email, true);
 
     if (!user) {
-      throw new HttpException("USER_NOT_FOUND", HttpStatus.NOT_FOUND);
+      throw new HttpException("EMAIL_NOT_FOUND", HttpStatus.NOT_FOUND);
     }
 
     const matched = bcrypt.compareSync(password, user.password);
