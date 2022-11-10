@@ -1,41 +1,50 @@
 import { Injectable } from "@nestjs/common";
+import { Post } from "@prisma/client";
 import { PrismaService } from "@root/prisma.service";
+
+type CreatePostType = {
+  author_id: string;
+  title: string;
+  content: string;
+  rating?: string;
+};
 
 @Injectable()
 export class PostsService {
   constructor(private readonly prisma: PrismaService) {}
 
-  private readonly posts = [
-    {
-      id: 1,
-      authorId: 1,
-      title: "My first ever post!",
-      content: "My first ever post content!",
-      rating: "Popular",
-      created_at: new Date("2020/7/10"),
-    },
-    {
-      id: 2,
-      authorId: 2,
-      title: "Learn React.js",
-      content: "Today we will learn how to fetch content using react js",
-      rating: "Technology",
-      created_at: new Date("2020/9/11"),
-    },
-    {
-      id: 3,
-      authorId: 1,
-      title: "Global warming",
-      rating: "Design",
-      content: "Today we will talk about global warming",
-      created_at: new Date("2021/5/21"),
-    },
-  ];
-
-  fetchPosts() {
-    return this.posts;
+  async fetchPosts() {
+    return await this.prisma.post.findMany({
+      include: { author: { select: { first_name: true, last_name: true } } },
+    });
   }
-  getPost(id: number) {
-    return this.posts.find((post) => post.id == id);
+
+  async fetchPostById(id: number) {
+    const post = await this.prisma.post.findUnique({
+      where: { id },
+      include: { author: { select: { first_name: true, last_name: true } } },
+    });
+    return post;
+  }
+
+  async fetchPostsByAuthor(author_id: string) {
+    return await this.prisma.post.findMany({
+      where: { author_id },
+      include: { author: { select: { first_name: true, last_name: true } } },
+    });
+  }
+
+  async createPost({
+    author_id,
+    title,
+    content,
+    rating,
+  }: CreatePostType): Promise<Post> {
+    const post = await this.prisma.post.create({
+      data: { content, title, rating, author_id },
+    });
+    console.log(post);
+
+    return post;
   }
 }
