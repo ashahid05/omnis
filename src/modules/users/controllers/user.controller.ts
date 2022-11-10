@@ -1,4 +1,3 @@
-import { HttpExceptionFilter } from "@filters/http-exception.filter";
 import { AuthenticatedGuard } from "@modules/auth/utils/local.guard";
 import {
   Body,
@@ -37,6 +36,11 @@ export class UserController {
     return user;
   }
 
+  @Get(":id/posts")
+  async getUserPosts(@Param("id") userId: string) {
+    const posts = await this.service.fetchUserPosts(userId);
+    return posts;
+  }
   @Post("create")
   async createUser(@Body() data: CreateUserDto) {
     const user = await this.service.createUser(data);
