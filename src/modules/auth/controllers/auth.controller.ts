@@ -7,7 +7,10 @@ export class AuthController {
   @UseGuards(LocalAuthGuard)
   @Post("login")
   async login(@Req() request: Request) {
-    return request.user;
+    return {
+      ...request.user,
+      session: { ...request.session.cookie, id: request.session.id },
+    };
   }
 
   @UseGuards(AuthenticatedGuard)
