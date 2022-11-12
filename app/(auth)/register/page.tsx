@@ -17,7 +17,7 @@ function RegisterPage() {
         </div>
         <div className="w-full relative py-5 px-1 sm:py-10 sm:px-5 md:w-1/2 md:px-10">
           <Image
-            src="/logo/svg/logo-no-background.svg"
+            src="/logo/logo.svg"
             width={350}
             height={147}
             alt="logo"

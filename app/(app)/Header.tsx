@@ -55,7 +55,7 @@ const Header: React.FC = () => {
         <div className="flex space-x-6 select-none">
           <Link href="/" className="flex items-center space-x-2">
             <Image
-              src="/logo/svg/logo-icon.svg"
+              src="/logo/logo-icon.svg"
               alt="logo"
               width={32}
               height={32}
