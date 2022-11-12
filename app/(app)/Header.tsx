@@ -6,13 +6,26 @@ import {
   FontAwesomeIcon,
   FontAwesomeIconProps,
 } from "@fortawesome/react-fontawesome";
-import { faSignInAlt } from "@fortawesome/free-solid-svg-icons";
+import {
+  faPlus,
+  faSignInAlt,
+  faUser,
+  faRightFromBracket,
+} from "@fortawesome/free-solid-svg-icons";
 import Button from "../Button";
-import React, { HTMLAttributes, MouseEventHandler, useState } from "react";
+import React, {
+  HTMLAttributes,
+  MouseEventHandler,
+  useRef,
+  useState,
+} from "react";
 import Utils from "../utils";
 import { motion, AnimationProps } from "framer-motion";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
+import useUser from "@app/user";
+import { DropdownItem, DropdownMenuWithRef } from "./Dropdown";
+import { useOutsideClick } from "./useOutsideClick";
 
 const routes: Navigation[] = [
   { title: "Posts", path: "/posts" },
@@ -45,7 +58,22 @@ const variants: AnimationProps["variants"] = {
 
 const Header: React.FC = () => {
   const [isMenuOpen, setMenuOpen] = useState<boolean>(false);
+  const [dropdownOpen, setDropdownOpen] = useState<boolean>(false);
+  const dropdown = useRef<HTMLDivElement>(null);
+  const dropdownToggler = useRef<HTMLButtonElement>(null);
   const router = useRouter();
+  const { user } = useUser();
+
+  useOutsideClick(
+    dropdown,
+    () => {
+      setDropdownOpen(false);
+    },
+    {
+      toggler: dropdownToggler,
+      onTogglerClick: () => void 0,
+    }
+  );
 
   const redirectToLogin = () => router.push("/login");
 
@@ -75,9 +103,55 @@ const Header: React.FC = () => {
           </div>
         </div>
         <div className="hidden sm:flex">
-          <Button color="primary" icon={faSignInAlt}>
-            <Link href="/login">Login</Link>
-          </Button>
+          {user ? (
+            <>
+              <div className="relative">
+                <button
+                  className="block h-11 w-11 rounded-full overflow-hidden border-2 border-primary-500"
+                  onClick={() => setDropdownOpen(!dropdownOpen)}
+                  ref={dropdownToggler}
+                >
+                  <Image
+                    className="h-full w-full object-cover p-px rounded-full"
+                    src="/images/dummy-pfp.jpeg"
+                    alt="PFP"
+                    width={256}
+                    height={256}
+                  />
+                </button>
+              </div>
+              <DropdownMenuWithRef
+                ref={dropdown}
+                isOpen={dropdownOpen}
+                className="right-4 top-14 w-48"
+              >
+                <div className="flex items-center justify-around p-2 border-b border-b-gray-500">
+                  <Image
+                    className="object-cover rounded-full h-10 w-10"
+                    src="/images/dummy-pfp.jpeg"
+                    alt="jane avatar"
+                    width={64}
+                    height={64}
+                  />
+                  <div>
+                    <Link
+                      className="text-sm text-gray-300 hover:text-gray-400 transition"
+                      href="/profile"
+                    >
+                      {user.name}
+                    </Link>
+                    <p className="text-xs text-gray-400">{user.email}</p>
+                  </div>
+                </div>
+                <DropdownItem icon={faUser}>View Profile</DropdownItem>
+                <DropdownItem icon={faPlus}>Create Post</DropdownItem>
+              </DropdownMenuWithRef>
+            </>
+          ) : (
+            <Button color="primary" icon={faSignInAlt}>
+              <Link href="/login">Login</Link>
+            </Button>
+          )}
         </div>
         <div className="flex items-center sm:hidden">
           <button onClick={() => setMenuOpen(!isMenuOpen)}>
@@ -118,10 +192,40 @@ const Header: React.FC = () => {
             ))}
           </div>
           <div className="px-2 py-5 border-t border-zinc-700">
-            <div className="mt-2">
-              <MobileMenuItem icon={faSignInAlt} onClick={redirectToLogin}>
-                Sign in
-              </MobileMenuItem>
+            <div>
+              {user ? (
+                <>
+                  <div className="flex items-center">
+                    <Image
+                      src="/images/dummy-pfp.jpeg"
+                      alt="pfp"
+                      className="h-11 w-11 object-cover rounded-full border-2 border-primary-500"
+                      width={256}
+                      height={256}
+                    />
+                    <div className="ml-3">
+                      <p className="font-semibold text-gray-300">{user.name}</p>
+                      <p className="text-sm text-gray-400">{user.email}</p>
+                    </div>
+                  </div>
+                  <div className="mt-3 space-y-2 pt-2">
+                    <MobileMenuItem icon={faUser}>View Profile</MobileMenuItem>
+                    <MobileMenuItem icon={faPlus}>Create Post</MobileMenuItem>
+                    <MobileMenuItem
+                      icon={faRightFromBracket}
+                      className="hover:bg-rose-800 hover:text-white"
+                    >
+                      Signout
+                    </MobileMenuItem>
+                  </div>
+                </>
+              ) : (
+                <div className="mt-2">
+                  <MobileMenuItem icon={faSignInAlt} onClick={redirectToLogin}>
+                    Sign in
+                  </MobileMenuItem>
+                </div>
+              )}
             </div>
           </div>
         </motion.div>
