@@ -36,12 +36,25 @@ a {
     content: "\f00c";
     @apply font-extrabold text-xs text-white hidden
   }
+
+  input[type="checkbox"]:disabled:after {
+    @apply text-gray-200
+  }
+
   input[type="checkbox"]:hover {
     @apply bg-gray-700
   }
 
+  input[type="checkbox"]:disabled {
+    @apply bg-gray-800 border-gray-700 cursor-not-allowed
+  }
+
   input[type="checkbox"]:checked {
     @apply bg-primary-700
+  }
+
+  input[type="checkbox"]:checked:disabled {
+    @apply bg-primary-800
   }
 
   input[type="checkbox"]:checked:after {
