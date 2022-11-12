@@ -5,6 +5,8 @@ import Button from "@app/Button";
 import { useFormik } from "formik";
 import FormInput from "../FormInput";
 import * as yup from "yup";
+import { useState } from "react";
+import { useRouter } from "next/navigation";
 
 const validationSchema = yup.object({
   email: yup.string().email().required("Email is required"),
@@ -13,21 +15,27 @@ const validationSchema = yup.object({
 });
 
 function LoginForm() {
+  const [loading, setLoading] = useState<boolean>(false);
+  const router = useRouter();
+
   const formik = useFormik({
     initialValues: { email: "", password: "", rememberMe: false },
     onSubmit: async (values) => {
+      setLoading(true);
       const result = await fetch("http://localhost:3001/auth/login", {
         method: "POST",
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           email: values.email,
           password: values.password,
         }),
-        headers: { "Content-Type": "application/json" },
       });
 
-      console.log(await result.json());
-      const result2 = await fetch("http://localhost:3001/users/@me");
-      console.log(await result2.json());
+      const data = await result.json();
+
+      router.push("/");
+      setLoading(false);
     },
     validationSchema,
   });
@@ -36,26 +44,26 @@ function LoginForm() {
       <div>
         <FormInput
           id="email"
-          name="email"
           type="text"
           label="Email"
           onChange={formik.handleChange}
           value={formik.values.email}
           icon={faEnvelope}
           error={formik.values.email ? formik.errors.email : undefined}
+          disabled={loading}
         />
       </div>
       <div>
         <div>
           <FormInput
             id="password"
-            name="password"
             type="password"
             label="Password"
             onChange={formik.handleChange}
             value={formik.values.password}
             icon={faKey}
             error={formik.values.password ? formik.errors.password : undefined}
+            disabled={loading}
           />
         </div>
       </div>
@@ -69,6 +77,7 @@ function LoginForm() {
               formik.setFieldValue("rememberMe", e.target.checked)
             }
             className="h-5 w-5"
+            disabled={loading}
           />
           <label
             htmlFor="remember-me"
@@ -84,6 +93,7 @@ function LoginForm() {
           type="submit"
           className="w-full block"
           disabled={Object.values(formik.errors).length !== 0}
+          loading={loading}
         >
           Sign in
         </Button>
