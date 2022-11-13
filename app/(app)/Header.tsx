@@ -62,7 +62,7 @@ const Header: React.FC = () => {
   const dropdown = useRef<HTMLDivElement>(null);
   const dropdownToggler = useRef<HTMLButtonElement>(null);
   const router = useRouter();
-  const { user } = useUser();
+  const { user, logOut } = useUser();
 
   useOutsideClick(
     dropdown,
@@ -145,6 +145,13 @@ const Header: React.FC = () => {
                 </div>
                 <DropdownItem icon={faUser}>View Profile</DropdownItem>
                 <DropdownItem icon={faPlus}>Create Post</DropdownItem>
+                <DropdownItem
+                  icon={faRightFromBracket}
+                  onClick={logOut}
+                  className="hover:bg-rose-600 hover:text-white"
+                >
+                  Sign out
+                </DropdownItem>
               </DropdownMenuWithRef>
             </>
           ) : (
@@ -213,7 +220,8 @@ const Header: React.FC = () => {
                     <MobileMenuItem icon={faPlus}>Create Post</MobileMenuItem>
                     <MobileMenuItem
                       icon={faRightFromBracket}
-                      className="hover:bg-rose-800 hover:text-white"
+                      onClick={logOut}
+                      className="hover:bg-rose-600 hover:text-white"
                     >
                       Signout
                     </MobileMenuItem>
