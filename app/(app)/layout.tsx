@@ -1,4 +1,5 @@
 import "@styles/globals.css";
+import "@sweetalert2/theme-dark/dark.css";
 
 import Header from "./Header";
 
