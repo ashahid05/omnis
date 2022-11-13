@@ -23,6 +23,25 @@ namespace Utils {
 
     return data;
   }
+
+  export async function logUserOut(): Promise<boolean | Error> {
+    const res = await fetch(
+      `${process.env.NEXT_PUBLIC_API_ENDPOINT}/auth/logout`,
+      {
+        method: "POST",
+        credentials: "include",
+      }
+    );
+    const success = res.status === 204;
+    if (!success) {
+      const data = await res.json();
+
+      const error = !res.ok ? data.error ?? data : undefined;
+      if (error) throw error;
+    }
+
+    return success;
+  }
 }
 
 export default Utils;
