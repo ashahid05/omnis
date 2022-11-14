@@ -7,6 +7,7 @@ import { PrismaSessionStore } from "@quixo3/prisma-session-store";
 
 import * as session from "express-session";
 import * as passport from "passport";
+import * as cookieParser from "cookie-parser";
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -21,7 +22,7 @@ async function bootstrap() {
   }>("app.cors");
 
   app.enableCors(corsConfig);
-
+  app.use(cookieParser());
   app.use(
     session({
       name: configService.get<string>("app.cookie.name"),
