@@ -144,7 +144,9 @@ const Header: React.FC = () => {
                   </div>
                 </div>
                 <DropdownItem icon={faUser}>View Profile</DropdownItem>
-                <DropdownItem icon={faPlus}>Create Post</DropdownItem>
+                <DropdownItem icon={faPlus}>
+                  <Link href="/posts/create">Create Post</Link>
+                </DropdownItem>
                 <DropdownItem
                   icon={faRightFromBracket}
                   onClick={logOut}
@@ -217,7 +219,9 @@ const Header: React.FC = () => {
                   </div>
                   <div className="mt-3 space-y-2 pt-2">
                     <MobileMenuItem icon={faUser}>View Profile</MobileMenuItem>
-                    <MobileMenuItem icon={faPlus}>Create Post</MobileMenuItem>
+                    <MobileMenuItem icon={faPlus}>
+                      <Link href="/posts/create">Create Post</Link>
+                    </MobileMenuItem>
                     <MobileMenuItem
                       icon={faRightFromBracket}
                       onClick={logOut}
