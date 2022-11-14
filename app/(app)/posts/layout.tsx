@@ -1,6 +1,6 @@
 function PostsLayout({ children }: { children: React.ReactNode }) {
   return (
-    <div className="flex justify-center">
+    <div>
       <div>{children}</div>
     </div>
   );
