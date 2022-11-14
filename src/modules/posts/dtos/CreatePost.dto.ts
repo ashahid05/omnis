@@ -8,7 +8,7 @@ export class CreatePostDto {
 
   @IsString()
   @IsNotEmpty()
-  @Length(50, 1000)
+  @Length(50, 2000)
   content: string;
 
   @IsString()
