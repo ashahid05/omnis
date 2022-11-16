@@ -18,9 +18,11 @@
     "forceConsistentCasingInFileNames": false,
     "noFallthroughCasesInSwitch": false,
     "paths": {
-      "@root/*": ["src/*"],
+      "@filters/*": ["src/filters/*"],
+      "@pipes/*": ["src/pipes/*"],
       "@modules/*": ["src/modules/"],
       "@app/*": ["src/modules/app/*"],
+      "@root/*": ["src/*"],
     }
   }
 }
