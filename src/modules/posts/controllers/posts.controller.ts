@@ -40,16 +40,10 @@ export class PostsController {
   @Post("create")
   @UseGuards(AuthenticatedGuard)
   @HttpCode(HttpStatus.CREATED)
-  async createPost(@User("id") userID: string, @Body() data: CreatePostDto) {
-    const post = await this.service.createPost({ ...data, author_id: userID });
-
-    return post;
-  }
-
-  @Post("upload")
-  @UseGuards(AuthenticatedGuard)
   @UseInterceptors(FileInterceptor("image"))
-  async uploadFile(
+  async createPost(
+    @User("id") userID: string,
+    @Body() data: CreatePostDto,
     @UploadedFile(
       new ParseFilePipe({
         validators: [
@@ -60,15 +54,19 @@ export class PostsController {
         ],
       }),
     )
-    file: Express.Multer.File,
-    @User("id") ownerID: string,
+    image: Express.Multer.File,
   ) {
-    const res = await this.service.uploadImage(
-      ownerID,
-      file.buffer,
-      file.mimetype,
+    const uploadedImage = await this.service.uploadImage(
+      userID,
+      image.buffer,
+      image.mimetype,
     );
+    const post = await this.service.createPost({
+      ...data,
+      author_id: userID,
+      image: uploadedImage.objectKey,
+    });
 
-    return res;
+    return post;
   }
 }
