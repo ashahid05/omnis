@@ -34,6 +34,7 @@ model Post {
   author     User     @relation(fields: [author_id], references: [id])
   author_id  String
   rating     String?
+  image      String?
   title      String
   content    String
   created_at DateTime @default(now())
