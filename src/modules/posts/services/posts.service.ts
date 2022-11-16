@@ -1,6 +1,8 @@
-import { Injectable } from "@nestjs/common";
+import { Inject, Injectable } from "@nestjs/common";
 import { Post } from "@prisma/client";
 import { PrismaService } from "@root/prisma.service";
+import { ClientProxy } from "@nestjs/microservices";
+import { lastValueFrom } from "rxjs";
 
 type CreatePostType = {
   author_id: string;
@@ -11,7 +13,10 @@ type CreatePostType = {
 
 @Injectable()
 export class PostsService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    @Inject("AWS") private readonly client: ClientProxy,
+    private readonly prisma: PrismaService,
+  ) {}
 
   async fetchPosts() {
     return await this.prisma.post.findMany({
@@ -46,5 +51,16 @@ export class PostsService {
     console.log(post);
 
     return post;
+  }
+
+  async uploadImage(ownerID: string, buffer: Buffer, mimetype: string) {
+    const res = await lastValueFrom(
+      this.client.send(
+        { cmd: "upload", dest: "posts" },
+        { body: buffer.toString("base64"), mimetype, owner: ownerID },
+      ),
+    );
+
+    return res;
   }
 }
