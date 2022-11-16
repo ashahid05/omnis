@@ -8,6 +8,7 @@ type CreatePostType = {
   author_id: string;
   title: string;
   content: string;
+  image?: string;
   rating?: string;
 };
 
@@ -43,17 +44,22 @@ export class PostsService {
     author_id,
     title,
     content,
+    image,
     rating,
   }: CreatePostType): Promise<Post> {
     const post = await this.prisma.post.create({
-      data: { content, title, rating, author_id },
+      data: { content, title, rating, author_id, image },
     });
     console.log(post);
 
     return post;
   }
 
-  async uploadImage(ownerID: string, buffer: Buffer, mimetype: string) {
+  async uploadImage(
+    ownerID: string,
+    buffer: Buffer,
+    mimetype: string,
+  ): Promise<{ success: boolean; objectKey: string }> {
     const res = await lastValueFrom(
       this.client.send(
         { cmd: "upload", dest: "posts" },
