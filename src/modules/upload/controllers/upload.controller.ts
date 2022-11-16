@@ -11,7 +11,7 @@ export class UploadController {
   async handleFileUpload(@Payload() data: UploadFileDto) {
     const { owner, body, mimetype } = data;
 
-    const res = await this.service.uploadFile(
+    const res = await this.service.uploadImage(
       Buffer.from(body, "base64"),
       { owner },
       mimetype,
