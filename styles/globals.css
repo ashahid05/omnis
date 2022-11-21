@@ -32,7 +32,8 @@ input[type="file"]:not(:disabled):not([readonly]) {
   cursor: pointer;
 }
 
-.ProseMirror {
+.ProseMirror,
+.post-html-content {
   outline: 0;
 }
 
@@ -44,7 +45,8 @@ input[type="file"]:not(:disabled):not([readonly]) {
   pointer-events: none;
 }
 
-.ProseMirror > pre {
+.ProseMirror > pre,
+.post-html-content > pre {
   background: #0d0d0d;
   color: white;
   font-family: monospace;
@@ -53,21 +55,26 @@ input[type="file"]:not(:disabled):not([readonly]) {
   border-radius: 0.5rem;
 }
 
-.ProseMirror > pre > code {
+.ProseMirror > pre > code,
+.post-html-content > pre > code {
   color: inherit;
   padding: 0;
   background: none;
   font-size: 0.8rem;
 }
-.ProseMirror > ol {
+.ProseMirror > ol,
+.post-html-content > ol {
   list-style: decimal;
 }
 
-.ProseMirror > ul {
+.ProseMirror > ul,
+.post-html-content > ul {
   list-style: disc;
 }
 .ProseMirror > ol,
-.ProseMirror > ul {
+.ProseMirror > ul,
+.post-html-content > ol,
+.post-html-content > ul {
   padding-inline-start: 20px;
   margin: unset;
 }
