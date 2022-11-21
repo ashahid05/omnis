@@ -1,4 +1,4 @@
-import { Module, OnApplicationBootstrap } from "@nestjs/common";
+import { Logger, Module, OnApplicationBootstrap } from "@nestjs/common";
 import {
   Client,
   ClientProxy,
@@ -18,16 +18,20 @@ import { PostsService } from "./services/posts.service";
     {
       provide: "AWS",
       useFactory: () => {
-        return ClientProxyFactory.create({ transport: Transport.TCP });
+        return ClientProxyFactory.create({
+          transport: Transport.TCP,
+          options: { port: 3002 },
+        });
       },
     },
   ],
 })
 export class PostsModule implements OnApplicationBootstrap {
-  @Client({ transport: Transport.TCP })
+  @Client({ transport: Transport.TCP, options: { port: 3002 } })
   client: ClientProxy;
 
   async onApplicationBootstrap() {
     await this.client.connect();
+    Logger.log("Microservice started", "AWS");
   }
 }
