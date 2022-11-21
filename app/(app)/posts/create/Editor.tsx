@@ -24,8 +24,8 @@ const characterLimit: number = 512;
 
 const Editor: React.FC<{
   onChange(currentContent: string): void;
-  initialContent: string;
-}> = ({ onChange, initialContent }) => {
+  disabled: boolean;
+}> = ({ onChange, disabled }) => {
   const editor = useEditor({
     extensions: [
       StarterKit,
@@ -36,6 +36,7 @@ const Editor: React.FC<{
         emptyEditorClass: "is-editor-empty",
       }),
     ],
+    editable: !disabled,
     onUpdate(props) {
       const content = props.editor.getHTML();
       return onChange(content);
@@ -50,10 +51,8 @@ const Editor: React.FC<{
             <button
               type="button"
               className={Utils.concat(
-                "p-2 rounded cursor-pointer hover:text-white hover:bg-gray-600",
-                editor?.isActive("bold")
-                  ? "bg-gray-800 text-white"
-                  : "text-gray-400"
+                "p-2 text-gray-400 rounded cursor-pointer hover:text-white hover:bg-gray-600",
+                editor?.isActive("bold") && "bg-gray-800"
               )}
               onClick={() => editor?.chain().focus().toggleBold().run()}
               disabled={!editor?.can().chain().focus().toggleBold().run()}
@@ -67,9 +66,7 @@ const Editor: React.FC<{
               type="button"
               className={Utils.concat(
                 "p-2 text-gray-400 rounded cursor-pointer hover:text-white hover:bg-gray-600",
-                editor?.isActive("italic")
-                  ? "bg-gray-800 text-white"
-                  : "text-gray-400"
+                editor?.isActive("italic") && "bg-gray-800"
               )}
               onClick={() => editor?.chain().focus().toggleItalic().run()}
               disabled={!editor?.can().chain().focus().toggleItalic().run()}
@@ -83,9 +80,7 @@ const Editor: React.FC<{
               type="button"
               className={Utils.concat(
                 "p-2 text-gray-400 rounded cursor-pointer hover:text-white hover:bg-gray-600",
-                editor?.isActive("underline")
-                  ? "bg-gray-800 text-white"
-                  : "text-gray-400"
+                editor?.isActive("underline") && "bg-gray-800"
               )}
               onClick={() => editor?.chain().focus().toggleUnderline().run()}
               disabled={!editor?.can().chain().focus().toggleUnderline().run()}
@@ -99,9 +94,7 @@ const Editor: React.FC<{
               type="button"
               className={Utils.concat(
                 "p-2 text-gray-400 rounded cursor-pointer hover:text-white hover:bg-gray-600",
-                editor?.isActive("strike")
-                  ? "bg-gray-800 text-white"
-                  : "text-gray-400"
+                editor?.isActive("strike") && "bg-gray-800"
               )}
               onClick={() => editor?.chain().focus().toggleStrike().run()}
               disabled={!editor?.can().chain().focus().toggleStrike().run()}
@@ -117,9 +110,7 @@ const Editor: React.FC<{
               type="button"
               className={Utils.concat(
                 "p-2 text-gray-400 rounded cursor-pointer hover:text-white hover:bg-gray-600",
-                editor?.isActive("orderedList")
-                  ? "bg-gray-800 text-white"
-                  : "text-gray-400"
+                editor?.isActive("orderedList") && "bg-gray-800"
               )}
               onClick={() => editor?.chain().focus().toggleOrderedList().run()}
             >
@@ -132,9 +123,7 @@ const Editor: React.FC<{
               type="button"
               className={Utils.concat(
                 "p-2 text-gray-400 rounded cursor-pointer hover:text-white hover:bg-gray-600",
-                editor?.isActive("bulletList")
-                  ? "bg-gray-800 text-white"
-                  : "text-gray-400"
+                editor?.isActive("bulletList") && "bg-gray-800"
               )}
               onClick={() => editor?.chain().focus().toggleBulletList().run()}
             >
@@ -149,9 +138,7 @@ const Editor: React.FC<{
               type="button"
               className={Utils.concat(
                 "p-2 text-gray-400 rounded cursor-pointer hover:text-white hover:bg-gray-600",
-                editor?.isActive("code")
-                  ? "bg-gray-800 text-white"
-                  : "text-gray-400"
+                editor?.isActive("code") && "bg-gray-800"
               )}
               onClick={() => editor?.chain().focus().toggleCode().run()}
               disabled={!editor?.can().chain().focus().toggleCode().run()}
@@ -165,9 +152,7 @@ const Editor: React.FC<{
               type="button"
               className={Utils.concat(
                 "p-2 text-gray-400 rounded cursor-pointer hover:text-white hover:bg-gray-600",
-                editor?.isActive("codeBlock")
-                  ? "bg-gray-800 text-white"
-                  : "text-gray-400"
+                editor?.isActive("codeBlock") && "bg-gray-800"
               )}
               onClick={() => editor?.chain().focus().toggleCodeBlock().run()}
               disabled={!editor?.can().chain().focus().toggleCodeBlock().run()}
@@ -199,7 +184,10 @@ const Editor: React.FC<{
         </div>
       </div>
       <div className="py-2 px-4 bg-cool-gray-900 rounded-b-lg">
-        <EditorContent editor={editor} />
+        <EditorContent
+          editor={editor}
+          style={{ cursor: disabled ? "not-allowed" : "text" }}
+        />
       </div>
     </div>
   );
