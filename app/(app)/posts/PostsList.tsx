@@ -25,7 +25,7 @@ async function PostsList() {
           title={post.title}
           description={post.content}
           rating={post.rating ?? "No rating"}
-          image={ArticleImage}
+          image={`${process.env.NEXT_PUBLIC_STORAGE}/posts/${post.image}`}
           link={`/posts/${post.id}`}
           date={post.created_at}
         />
