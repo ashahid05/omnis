@@ -1,13 +1,21 @@
 "use client";
 import Utils from "#utils";
 import Button from "@app/Button";
+import { FontAwesomeIconProps } from "@fortawesome/react-fontawesome";
 import { useFormik } from "formik";
 import dynamic from "next/dynamic";
-import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import React, {
+  DetailedHTMLProps,
+  InputHTMLAttributes,
+  useEffect,
+  useState,
+} from "react";
 import * as yup from "yup";
 
 const Editor = dynamic(() => import("./Editor"), {
   ssr: false,
+  loading: () => <div>Loading editor, please wait</div>,
 });
 
 const validationSchema = yup.object({
@@ -29,10 +37,24 @@ const validationSchema = yup.object({
 });
 
 function CreatePostPage() {
+  const [loading, setLoading] = useState<boolean>(false);
+  const router = useRouter();
   const formik = useFormik({
-    initialValues: { title: "", rating: "", content: "", image: undefined },
-    onSubmit: (values) => {
-      console.log("Submitted", values);
+    initialValues: {
+      title: "",
+      rating: "",
+      content: "",
+      image: undefined,
+    },
+    onSubmit: async (values) => {
+      setLoading(true);
+      const data = await Utils.createPost(
+        values.title,
+        values.content,
+        values.image as unknown as File,
+        values.rating
+      );
+      router.push(`/posts/${data.id}`);
     },
     validationSchema,
   });
@@ -58,52 +80,29 @@ function CreatePostPage() {
           <form onSubmit={formik.handleSubmit}>
             <div>
               <div className="space-y-6 rounded-t-lg bg-cool-gray-900 px-4 py-6 sm:p-6">
-                <div className="flex flex-col max-w-full">
-                  <label
-                    className={Utils.concat(
-                      "flex select-none items-center justify-between px-2 py-1 font-semibold ",
-                      formik.errors.title ? "text-red-500" : "text-gray-200"
-                    )}
-                  >
-                    <span className="text-sm leading-5">Title</span>
-                  </label>
-                  <input
-                    id="title"
-                    type="text"
-                    placeholder="Type here"
-                    maxLength={30}
-                    onChange={formik.handleChange}
-                    value={formik.values.title}
-                    className={Utils.concat(
-                      "transition duration-200 ease-in-out h-12 px-4 text-base border rounded-lg w-auto bg-cool-gray-800 placeholder-gray-400 text-white outline-none",
-                      formik.errors.title
-                        ? "border-red-400"
-                        : "border-gray-600 focus:border-primary-500"
-                    )}
-                  />
-                  <label
-                    className={Utils.concat(
-                      "flex select-none items-center justify-between px-2 py-1 font-semibold",
-                      formik.errors.title ? "text-rose-600" : "text-gray-500"
-                    )}
-                  >
-                    <span className="text-xs leading-4">
-                      {formik.errors.title ??
-                        "Titles can be up to 30 characters"}
-                    </span>
-                  </label>
-                </div>
+                <FormField
+                  label="Title"
+                  id="title"
+                  type="text"
+                  placeholder="Type here"
+                  maxLength={30}
+                  onChange={formik.handleChange}
+                  value={formik.values.title}
+                  error={formik.errors.title}
+                  disabled={loading}
+                  altText="Titles can be up to 30 characters"
+                />
                 <div className="flex flex-col max-w-full">
                   <label
                     className={Utils.concat(
                       "flex select-none items-center justify-between px-2 py-1 font-semibold",
-                      formik.errors.content ? "text-red-500" : "text-gray-200"
+                      formik.errors.content ? "text-rose-600" : "text-gray-200"
                     )}
                   >
                     <span className="text-sm leading-5">Content</span>
                   </label>
                   <Editor
-                    initialContent={formik.values.content}
+                    disabled={loading}
                     onChange={(newContent) => {
                       formik.setFieldValue("content", newContent);
                     }}
@@ -119,45 +118,22 @@ function CreatePostPage() {
                     </span>
                   </label>
                 </div>
+                <FormField
+                  id="rating"
+                  type="text"
+                  maxLength={10}
+                  value={formik.values.rating}
+                  onChange={formik.handleChange}
+                  label="Rating"
+                  error={formik.errors.rating}
+                  disabled={loading}
+                  altText="Ratings can be up to 10 characters"
+                />
                 <div className="flex flex-col max-w-full">
                   <label
                     className={Utils.concat(
                       "flex select-none items-center justify-between px-2 py-1 font-semibold",
-                      formik.errors.rating ? "text-red-500" : "text-gray-200"
-                    )}
-                  >
-                    <span className="text-sm leading-5">Rating</span>
-                  </label>
-                  <input
-                    id="rating"
-                    type="text"
-                    maxLength={10}
-                    value={formik.values.rating}
-                    onChange={formik.handleChange}
-                    className={Utils.concat(
-                      "transition duration-200 ease-in-out h-12 px-4 text-base border rounded-lg w-auto bg-cool-gray-800 placeholder-gray-400 text-white outline-none",
-                      formik.errors.rating
-                        ? "border-red-400"
-                        : "border-gray-600 focus:border-primary-500"
-                    )}
-                  />
-                  <label
-                    className={Utils.concat(
-                      "flex select-none items-center justify-between px-2 py-1 font-semibold",
-                      formik.errors.rating ? "text-rose-600" : "text-gray-500"
-                    )}
-                  >
-                    <span className="text-xs leading-4">
-                      {formik.errors.rating ??
-                        "Ratings can be up to 10 characters"}
-                    </span>
-                  </label>
-                </div>
-                <div className="flex flex-col max-w-full">
-                  <label
-                    className={Utils.concat(
-                      "flex select-none items-center justify-between px-2 py-1 font-semibold",
-                      formik.errors.image ? "text-red-500" : "text-gray-200"
+                      formik.errors.image ? "text-rose-600" : "text-gray-200"
                     )}
                   >
                     <span className="text-sm leading-5">Thumbnail</span>
@@ -166,7 +142,7 @@ function CreatePostPage() {
                     type="file"
                     accept="image/*"
                     multiple={false}
-                    onChange={(event) => {
+                    onChange={async (event) => {
                       const file = event.target.files && event.target.files[0];
                       if (!file) return;
 
@@ -183,8 +159,12 @@ function CreatePostPage() {
                         formik.setFieldValue("image", file);
                       }
                     }}
+                    disabled={loading}
                     className={Utils.concat(
-                      "block h-18 w-auto text-sm rounded-lg border transition duration-200 ease-in-out cursor-pointer text-gray-400 outline-none bg-cool-gray-900 border-gray-600 placeholder-gray-400 focus:border-primary-500",
+                      "block h-18 w-auto text-sm rounded-lg border transition duration-200 ease-in-out cursor-pointer text-gray-400 outline-none bg-cool-gray-900 placeholder-gray-400 disabled:cursor-not-allowed disabled:border-gray-700",
+                      formik.errors.image
+                        ? "border-rose-600"
+                        : "border-gray-600 focus:border-primary-500",
                       "file:mr-3 file:p-2 file:px-6 file:rounded-l-md file:border-0 file:text-sm file:font-medium file:bg-cool-gray-800 file:text-gray-400 file:outline-none"
                     )}
                   />
@@ -206,6 +186,7 @@ function CreatePostPage() {
                 <Button
                   type="submit"
                   disabled={Object.values(formik.errors).length !== 0}
+                  loading={loading}
                 >
                   Submit
                 </Button>
@@ -217,6 +198,61 @@ function CreatePostPage() {
     </div>
   );
 }
+
+type FormFieldProps = DetailedHTMLProps<
+  InputHTMLAttributes<HTMLInputElement>,
+  HTMLInputElement
+> & {
+  label: string;
+  icon?: FontAwesomeIconProps["icon"];
+  error: string | undefined;
+  altText?: string;
+};
+
+const FormField: React.FC<FormFieldProps> = ({
+  error,
+  icon,
+  label,
+  disabled,
+  altText,
+  ...props
+}) => {
+  return (
+    <div className="flex flex-col max-w-full">
+      <label
+        className={Utils.concat(
+          "flex select-none items-center justify-between px-2 py-1 font-semibold",
+          error ? "text-rose-600" : "text-gray-200"
+        )}
+      >
+        <span className="text-sm leading-5">{label}</span>
+      </label>
+      <input
+        {...props}
+        name={props.id}
+        disabled={disabled}
+        className={Utils.concat(
+          "transition duration-200 ease-in-out h-11 px-4 text-base border rounded-lg w-auto bg-cool-gray-800 placeholder-gray-400 text-white outline-none disabled:cursor-not-allowed disabled:bg-cool-gray-900 disabled:border-gray-700 disabled:text-gray-400",
+          error
+            ? "border-rose-600"
+            : "border-gray-600 focus:border-primary-500",
+          props.className
+        )}
+      />
+
+      {(altText || error) && (
+        <label
+          className={Utils.concat(
+            "flex select-none items-center justify-between px-2 py-1 font-semibold",
+            error ? "text-rose-600" : "text-gray-500"
+          )}
+        >
+          <span className="text-xs leading-4">{error ?? altText}</span>
+        </label>
+      )}
+    </div>
+  );
+};
 
 const Thumb: React.FC<{ file: File | undefined }> = ({ file }) => {
   const [loading, setLoading] = useState<boolean>(true);
