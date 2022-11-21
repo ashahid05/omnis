@@ -27,7 +27,13 @@ const PostCard: React.FC<PostCardProps> = ({
   return (
     <div className="block overflow-hidden box-border rounded-xl bg-gray-800 shadow-xl relative z-0">
       <Link href={link}>
-        <Image src={image} alt="" className="h-56 w-full object-cover" />
+        <Image
+          src={image}
+          alt=""
+          width={1000}
+          height={256}
+          className="h-56 w-full object-cover"
+        />
       </Link>
       {rating ? (
         <div className="inline-flex h-5 text-xs px-2 uppercase cursor-default items-center justify-center w-auto rounded-full overflow-hidden bg-gradient-to-r from-primary-700 to-primary-500 text-white font-bold absolute top-3 right-3">
@@ -41,7 +47,11 @@ const PostCard: React.FC<PostCardProps> = ({
       <div className="p-4">
         <h1 className="font-bold text-xl text-primary-100">{title}</h1>
         <p className="mt-1 font-extralight text-ellipsis whitespace-nowrap overflow-hidden">
-          {description}
+          {/*
+            Convert HTML to plain text
+            https://stackoverflow.com/questions/63574937/how-to-convert-html-string-into-plain-text-in-react
+          */}
+          {description.replace(/<[^>]+>/g, "")}
         </p>
         <div className="flex justify-between items-center mt-4">
           <div className="inline-flex items-center space-x-2">
